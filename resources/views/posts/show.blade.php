@@ -3,7 +3,7 @@
 @section('content')
 
         <h1>{{$post->title}}</h1>
-        <small>Created {{$post->created_at}} By {{$post->user->name}}</small>
+        <small>Created {{$post->created_at}} By {{$post->user->name}}</small><br>
         <img class="img-fluid" src="/storage/cover_images/{{$post->cover_image}}">
         <p>{!!$post->body!!}</p>
 
