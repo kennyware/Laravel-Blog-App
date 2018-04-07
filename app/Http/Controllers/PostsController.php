@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Post;
 
+$s3 = Aws\S3\S3Client::factory();
+$bucket = getenv('S3_BUCKET')?: die('No "S3_BUCKET" config var in found in env!');
+
 class PostsController extends Controller
 {
     /**
@@ -70,6 +73,7 @@ class PostsController extends Controller
             
             //Upload file
             $path = $request->file('cover_image')->storeAs('public/cover_images', $fileNameToStore);
+            $upload = $s3->upload($bucket, $fileNameToStore, fopen($fileNameToStore, 'rb'), 'public-read');
         }
         else{
             $fileNameToStore = 'noimage.jpg';
