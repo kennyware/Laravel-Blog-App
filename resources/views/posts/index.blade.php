@@ -2,6 +2,17 @@
 
 @section('content')
     <h1>Posts</h1>
+    <div class="dropdown">
+        <label>Sort:</label>
+        <span class="dropdown-toggle" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            {{current($sortingtypes)}}
+        </span>
+        <div class="dropdown-menu" aria-labelledby="dropdown01">
+        @foreach($sortingtypes as $sortingtype)
+            <span class="dropdown-item">{{next($sortingtypes)}}</span>
+        @endforeach
+        </div>
+    </div>
     @if(count($posts) > 0)
         @foreach($posts as $post)
             <div class="jumbotron">
