@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use League\Flysystem\Filesystem;
 use App\Post;
 
-$s3 = Aws\S3\S3Client::factory();
-$bucket = getenv('S3_BUCKET')?: die('No "S3_BUCKET" config var in found in env!');
+$s3 = Storage::disk('s3');
 
 class PostsController extends Controller
 {
@@ -73,17 +73,18 @@ class PostsController extends Controller
             
             //Upload file
             $path = $request->file('cover_image')->storeAs('public/cover_images', $fileNameToStore);
-            $upload = $s3->upload($bucket, $fileNameToStore, fopen($fileNameToStore, 'rb'), 'public-read');
+            $s3->put($fileNameToStore, file_get_contents($request->file('cover_image')), 'public');
+            $url = $s3->url($fileNameToStore);
         }
         else{
-            $fileNameToStore = 'noimage.jpg';
+            $url = 'https://s3.us-east-2.amazonaws.com/techvoice-img/noimage.jpg';
         }
 
         $post = new Post;
         $post->title = $request->input('title');
         $post->body = $request->input('body');
         $post->user_id = auth()->user()->id;
-        $post->cover_image = $fileNameToStore;
+        $post->cover_image = $url;
         $post->save();
 
         return redirect('/posts')->with('success', 'Post Created');
